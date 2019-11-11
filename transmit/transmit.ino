@@ -1,3 +1,5 @@
+#include "physical.h"
+
 //Pin
 const int OUT_PIN = A0;
 
@@ -44,29 +46,44 @@ void addString(String new_string)
   }
 }
 
-void transmitBit(int bit_to_transmit)
-{
-  //Transmit a bit, in whatever way you want.
-  
-}
+//void transmitBit(int bit_to_transmit)
+//{
+//  //Transmit a bit, in whatever way you want.
+//  
+//}
+//
+//void transmitBits()
+//{
+//  bit_position = 0; //Make sure that we start from the beggining.
+//  while (bit_position != max_bit_position)
+//  {
+//    transmitBit(bit_buffer[bit_position]);
+//    bit_position++;
+//  }
+//  max_bit_position = 0; //When we are done, we set the max back to zero, thereby clearing the buffer.
+//}
 
-void transmitBits()
-{
-  bit_position = 0; //Make sure that we start from the beggining.
-  while (bit_position != max_bit_position)
-  {
-    transmitBit(bit_buffer[bit_position]);
-    bit_position++;
+void transmitBit(){
+  if(PHY::update(bit_buffer[bit_position])) bit_position++;
+  if(bit_position == max_bit_position){
+    bit_position = 0;
+    max_bit_position = 0;
   }
-  max_bit_position = 0; //When we are done, we set the max back to zero, thereby clearing the buffer.
 }
 
 void setup() {
-  // put your setup code here, to run once:
-
+  PHY::setup();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
+  if(max_bit_position > 0){
+    transmitBit();
+  }
+  else{
+    if(Serial.available()){
+      addString(Serial.readString());
+    }
+  }
+  
 }
