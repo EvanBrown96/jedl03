@@ -1,47 +1,48 @@
 #include "physical.h"
 
-//Pin
-const int OUT_PIN = A0;
+// max single transmission size
+#define BIT_BUFFER_SIZE 1024
 
-//Values
-const int MAX_BIT_BUFFER_SIZE = 256;
+// stores bits to send
+byte bit_buffer[BIT_BUFFER_SIZE];
+// number of bits to send
+int saved_bits = 0;
 
-//State
-int bit_buffer[MAX_BIT_BUFFER_SIZE] = {0};
-int max_bit_position = 0;
-int bit_position = 0;
-
-void addBit(int new_bit)
-{
-  //Add a bit to the bit buffer.
-  bit_buffer[bit_position] = new_bit;
-  if (max_bit_position != MAX_BIT_BUFFER_SIZE) max_bit_position++;
+bool addBit(int new_bit) {
+  /**
+   * add a single bit to the buffer
+   */
+  if (saved_bits < BIT_BUFFER_SIZE){ 
+    bit_buffer[saved_bits] = new_bit;
+    saved_bits++;
+  }
 }
 
-int getBinaryIntFromInt(int int_source, int position)
-{
-  int mask = pow(2, position);
-  int result = int_source & mask;
-  if (result == mask) return 1;
-  else return 0;
+//int getBinaryIntFromInt(int int_source, int position)
+//{
+//  int mask = pow(2, position);
+//  int result = int_source & mask;
+//  if (result == mask) return 1;
+//  else return 0;
+//}
+
+void addChar(char new_char) {
+  for(int i = 0; i < 8; i++) {
+    addBit(new_char%2);
+    new_char >>= 1;
+  }
+//  addBit(getBinaryIntFromInt(new_char, 0));
+//  addBit(getBinaryIntFromInt(new_char, 1));
+//  addBit(getBinaryIntFromInt(new_char, 2));
+//  addBit(getBinaryIntFromInt(new_char, 3));
+//  addBit(getBinaryIntFromInt(new_char, 4));
+//  addBit(getBinaryIntFromInt(new_char, 5));
+//  addBit(getBinaryIntFromInt(new_char, 6));
+//  addBit(getBinaryIntFromInt(new_char, 7));
 }
 
-void addChar(char new_char)
-{
-  addBit(getBinaryIntFromInt(new_char, 0));
-  addBit(getBinaryIntFromInt(new_char, 1));
-  addBit(getBinaryIntFromInt(new_char, 2));
-  addBit(getBinaryIntFromInt(new_char, 3));
-  addBit(getBinaryIntFromInt(new_char, 4));
-  addBit(getBinaryIntFromInt(new_char, 5));
-  addBit(getBinaryIntFromInt(new_char, 6));
-  addBit(getBinaryIntFromInt(new_char, 7));
-}
-
-void addString(String new_string)
-{
-  for (int i = 0; i < new_string.length(); i++)
-  {
+void addString(String new_string) {
+  for (int i = 0; i < new_string.length(); i++) {
     addChar(new_string[i]);
   }
 }
@@ -63,11 +64,15 @@ void addString(String new_string)
 //  max_bit_position = 0; //When we are done, we set the max back to zero, thereby clearing the buffer.
 //}
 
+int transmit_pos = 0;
+
 void transmitBit(){
-  if(PHY::update(bit_buffer[bit_position])) bit_position++;
-  if(bit_position == max_bit_position){
-    bit_position = 0;
-    max_bit_position = 0;
+  if(PHY::update(bit_buffer[transmit_pos])){
+    transmit_pos++;
+    if(transmit_pos == saved_bits){
+      transmit_pos = 0;
+      saved_bits = 0;
+    }
   }
 }
 
@@ -77,7 +82,7 @@ void setup() {
 
 void loop() {
 
-  if(max_bit_position > 0){
+  if(saved_bits > 0){
     transmitBit();
   }
   else{
