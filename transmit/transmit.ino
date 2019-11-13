@@ -57,16 +57,17 @@ void transmitBit(){
 
 void setup() {
   PHY::setup();
+  Serial.begin(9600);
 }
 
 void loop() {
-
   if(saved_bits > 0){
     transmitBit();
   }
   else{
     if(Serial.available()){
       addString(Serial.readString());
+      Serial.println("Transmitting");
     }
   }
   
