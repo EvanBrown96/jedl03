@@ -20,13 +20,12 @@ void setup() {
 }
 
 void loop() {
-  if(LINK::isTransmitting()){
-    LINK::update();
-  }
-  else{
+  
+  if(!LINK::update()){
     if(Serial.available()){
       addString(Serial.readString());
       Serial.println("Transmitting");
+      LINK::startTransmission();
     }
   }
   
