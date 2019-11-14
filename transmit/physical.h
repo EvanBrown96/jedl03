@@ -9,9 +9,9 @@
 // output bit rate
 #define BIT_RATE   2400
 // output to use for logical '0'
-#define LOW_FREQ   47000
+#define LOW_FREQ   40000
 // output to use for logical '1'
-#define HIGH_FREQ  53000
+#define HIGH_FREQ  60000
 // half the time a single bit is transmitted for (us)
 #define PHASE_TIME 500000/BIT_RATE
 
