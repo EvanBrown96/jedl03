@@ -76,6 +76,9 @@ namespace LINK {
      */
     is_transmitting = true;
     addByte(MESSAGE_FLAG);
+    // for(int i = 0; i < saved_bytes; i++){
+    //   Serial.println(byte_buffer[i]);
+    // }
   }
 
   bool update() {
@@ -86,10 +89,10 @@ namespace LINK {
     if(isTransmitting()) {
       // update physical bit being transmitted
       if(PHY::update(getCurBit())) {
-        Serial.println(getCurBit());
         // if successfully updated, move to next bit
         progressBit();
         if(byte_pos == saved_bytes) {
+          // Serial.println(saved_bytes);
           reset();
         }
       }
