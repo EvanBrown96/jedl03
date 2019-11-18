@@ -6,7 +6,7 @@
 namespace LINK {
 
   byte byte_buffer[BUFFER_SIZE];
-  byte cur_byte;
+  byte cur_byte = 0x00;
   int byte_pos;
   byte bit_pos;
   bool is_receiving;
@@ -15,7 +15,7 @@ namespace LINK {
     is_receiving = false;
     byte_pos = 0;
     bit_pos = 0;
-    cur_byte = 0x00;
+    PHY::reset();
   }
 
   void setup() {
@@ -51,10 +51,9 @@ namespace LINK {
         }
         else{
           byte_buffer[byte_pos] = cur_byte;
-          cur_byte = 0x00;
-          bit_pos = 0;
           byte_pos++;
         }
+        bit_pos = 0;
       }
     }
 

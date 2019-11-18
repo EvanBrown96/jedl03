@@ -2,7 +2,7 @@
 #include <math.h>
 
 #define READ_PIN    A0
-#define APPROX_BIT_RATE 10.0
+#define APPROX_BIT_RATE 300.0
 #define PHASE_TIME  500000/APPROX_BIT_RATE
 #define SAMPLE_SIZE 10
 #define SAMPLE_TIME (250000/APPROX_BIT_RATE)/SAMPLE_SIZE
@@ -11,14 +11,18 @@
 
 namespace PHY {
 
-  Averager average(SAMPLE_SIZE);
-  bool phase_set;
-  bool front_half;
-  unsigned long last_change;
-  bool last_phase_high;
+  namespace {
 
-  unsigned long last_time;
-  unsigned long cur_time;
+    Averager average(SAMPLE_SIZE);
+    bool phase_set;
+    bool front_half;
+    unsigned long last_change;
+    bool last_phase_high;
+
+    unsigned long last_time;
+    unsigned long cur_time;
+
+  }
 
   void reset() {
     phase_set = false;
@@ -60,7 +64,7 @@ namespace PHY {
           }
           else if(phases_elapsed != 0){
             // ERROR
-            Serial.println("error");
+            Serial.println("error low");
             Serial.println(phases_elapsed);
             Serial.println(front_half);
           }
@@ -70,6 +74,8 @@ namespace PHY {
         // rising edge detected
         last_phase_high = true;
         if(!phase_set){
+//          Serial.println("initialize");
+//          Serial.println(average.get());
           // initialize receiving
           phase_set = true;
           last_change = cur_time;
@@ -96,7 +102,7 @@ namespace PHY {
           }
           else if(phases_elapsed != 0){
             // error
-            Serial.println("error");
+            Serial.println("error hi");
             Serial.println(phases_elapsed);
             Serial.println(front_half);
           }

@@ -7,7 +7,7 @@
 // pin on which to output the PWM signal
 #define PWM_PIN    3
 // output bit rate
-#define BIT_RATE   2400.0
+#define BIT_RATE   300.0
 // output to use for logical '0'
 #define LOW_FREQ   47000
 // output to use for logical '1'
@@ -21,7 +21,7 @@ namespace PHY {
   namespace {
 
     // if transmitted is in the half of bit time to transmit in
-    bool front_half = true;
+    bool front_half = false;
     // time containers
     unsigned long cur_time;
     unsigned long last_time = 0;
@@ -52,6 +52,20 @@ namespace PHY {
     pwmWrite(PWM_PIN, 128);
   }
 
+  bool idle(){
+    /**
+     * update the transmission line to be idle (only low output)
+     * @return true if the transmission line successfully set to idle
+     */
+    cur_time = micros();
+    if(cur_time - last_time >= PHASE_TIME){
+      last_time = cur_time;
+      setLow();
+      return true;
+    }
+    return false;
+  }
+
   bool update(byte next_bit){
     /**
      * updates the physical state of the arduino
@@ -65,12 +79,12 @@ namespace PHY {
         front_half = false;
         if(next_bit) setLow();
         else         setHigh();
+        return true;
       }
       else{
         front_half = true;
         if(next_bit) setHigh();
         else         setLow();
-        return true;
       }
     }
     return false;

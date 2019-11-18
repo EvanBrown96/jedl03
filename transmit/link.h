@@ -14,13 +14,12 @@ namespace LINK {
     byte bit_pos;
 
     byte getCurBit() {
-      return byte_buffer[byte_pos] % 2;
+      return (byte_buffer[byte_pos] >> (7 - bit_pos)) & 0x01;
     }
 
     void progressBit() {
       if(bit_pos < 7){
         bit_pos++;
-        byte_buffer[byte_pos] >>= 1;
       }
       else{
         bit_pos = 0;
@@ -76,9 +75,6 @@ namespace LINK {
      */
     is_transmitting = true;
     addByte(MESSAGE_FLAG);
-    // for(int i = 0; i < saved_bytes; i++){
-    //   Serial.println(byte_buffer[i]);
-    // }
   }
 
   bool update() {
@@ -87,14 +83,14 @@ namespace LINK {
      * @return true if the link is transmitting
      */
     if(isTransmitting()) {
+      if(byte_pos == saved_bytes){
+        // if end of transmission reached, set line to idle
+        if(PHY::idle()) reset();
+      }
       // update physical bit being transmitted
-      if(PHY::update(getCurBit())) {
+      else if(PHY::update(getCurBit())) {
         // if successfully updated, move to next bit
         progressBit();
-        if(byte_pos == saved_bytes) {
-          // Serial.println(saved_bytes);
-          reset();
-        }
       }
 
       return true;
