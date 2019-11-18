@@ -29,7 +29,6 @@ namespace PHY {
     front_half = true;
     last_time = 0;
     average.clear();
-    last_phase_high = false;
   }
 
   bool update(byte& buffer) {
@@ -74,8 +73,6 @@ namespace PHY {
         // rising edge detected
         last_phase_high = true;
         if(!phase_set){
-//          Serial.println("initialize");
-//          Serial.println(average.get());
           // initialize receiving
           phase_set = true;
           last_change = cur_time;
