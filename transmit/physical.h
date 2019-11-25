@@ -7,7 +7,7 @@
 // pin on which to output the PWM signal
 #define PWM_PIN    3
 // output bit rate
-#define BIT_RATE   300.0
+#define BIT_RATE   400.0
 // output to use for logical '0'
 #define LOW_FREQ   47000
 // output to use for logical '1'

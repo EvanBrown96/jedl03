@@ -13,6 +13,7 @@ void loop() {
         char c = LINK::getByte(i);
         Serial.print(c);
       }
+      Serial.println("");
       LINK::reset();
     }
   }
