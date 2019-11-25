@@ -2,7 +2,7 @@
 #include <math.h>
 
 #define READ_PIN    A0
-#define APPROX_BIT_RATE 300.0
+#define APPROX_BIT_RATE 400.0
 #define PHASE_TIME  500000/APPROX_BIT_RATE
 #define SAMPLE_SIZE 10
 #define SAMPLE_TIME (250000/APPROX_BIT_RATE)/SAMPLE_SIZE
@@ -63,9 +63,7 @@ namespace PHY {
           }
           else if(phases_elapsed != 0){
             // ERROR
-            Serial.println("error low");
-            Serial.println(phases_elapsed);
-            Serial.println(front_half);
+            Serial.println("transmission error");
           }
         }
       }
@@ -98,10 +96,8 @@ namespace PHY {
             // rising edge between bits after full bit low should not happen, so fall through to error
           }
           else if(phases_elapsed != 0){
-            // error
-            Serial.println("error hi");
-            Serial.println(phases_elapsed);
-            Serial.println(front_half);
+            // ERROR
+            Serial.println("transmission error");
           }
         }
       }
