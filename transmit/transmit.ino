@@ -23,9 +23,21 @@ void loop() {
   
   if(!LINK::update()){
     if(Serial.available()){
-      addString(Serial.readString());
-      Serial.println("Transmitting");
-      LINK::startTransmission();
+      String msg = Serial.readString();
+      if(msg == "test"){
+        while(!Serial.available()){
+          SetPinFrequencySafe(PWM_PIN, LOW_FREQ);
+          delayMicroseconds(1000000/BIT_RATE);
+          SetPinFrequencySafe(PWM_PIN, HIGH_FREQ);
+          delayMicroseconds(1000000/BIT_RATE);
+        }
+      }
+      else{
+        addString(msg);
+        Serial.print("Transmitting: ");
+        Serial.println(msg);
+        LINK::startTransmission();
+      }
     }
   }
   
