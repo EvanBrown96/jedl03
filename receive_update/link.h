@@ -37,7 +37,9 @@ namespace LINK {
   }
 
   bool update() {
-    if(PHY::update(cur_byte)){
+    int updated = PHY::update(cur_byte);
+    
+    if(updated == 1){
       is_receiving = true;
 
       if(bit_pos < 7){
@@ -56,11 +58,13 @@ namespace LINK {
         bit_pos = 0;
       }
     }
+    else if(updated == -1){
+      is_receiving = false;
+      Serial.println("transmission error");
+    }
 
     return is_receiving;
 
   }
-
-
 
 }

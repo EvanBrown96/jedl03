@@ -1,10 +1,10 @@
- #include "link.h"
+#include "link.h"
 
- void setup() {
-   // put your setup code here, to run once:
-   LINK::setup();
-   Serial.begin(9600);
- }
+void setup() {
+  // put your setup code here, to run once:
+  LINK::setup();
+  Serial.begin(9600);
+}
 
 void loop() {
   if(!LINK::update()){

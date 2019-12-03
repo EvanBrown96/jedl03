@@ -6,8 +6,8 @@
 #define PHASE_TIME  500000/APPROX_BIT_RATE
 #define SAMPLE_SIZE 10
 #define SAMPLE_TIME (250000/APPROX_BIT_RATE)/SAMPLE_SIZE
-#define LOW_THRESHOLD   284
-#define HIGH_THRESHOLD  370
+#define LOW_THRESHOLD   378
+#define HIGH_THRESHOLD  470
 
 namespace PHY {
 
@@ -31,7 +31,7 @@ namespace PHY {
     average.clear();
   }
 
-  bool update(byte& buffer) {
+  int update(byte& buffer) {
     cur_time = micros();
     if(cur_time - last_time >= SAMPLE_TIME) {
       last_time = cur_time;
@@ -50,7 +50,7 @@ namespace PHY {
               // falling edge at center of bit = 1
               buffer <<= 1;
               buffer |= 0x01;
-              return true;
+              return 1;
             }
             // falling edge between bits = 0, but will be caught next cycle
           }
@@ -58,12 +58,12 @@ namespace PHY {
             // falling edge at center of bit = 1
             buffer <<= 1;
             buffer |= 0x01;
-            return true;
+            return 1;
             // falling edge between bits after full bit up should not happen, so fall through to error
           }
           else if(phases_elapsed != 0){
             // ERROR
-            Serial.println("transmission error");
+            return -1;
           }
         }
       }
@@ -85,25 +85,25 @@ namespace PHY {
             if(!front_half){
               // rising edge at center of bit = 0
               buffer <<= 1;
-              return true;
+              return 1;
             }
             // rising edge between bits = 1, but will be caught next cycle
           }
           else if(phases_elapsed == 2 && !front_half){
             // rising edge at center of bit = 1
             buffer <<= 1;
-            return true;
+            return 1;
             // rising edge between bits after full bit low should not happen, so fall through to error
           }
           else if(phases_elapsed != 0){
             // ERROR
-            Serial.println("transmission error");
+            return -1; 
           }
         }
       }
     }
 
-    return false;
+    return 0;
 
   }
 
