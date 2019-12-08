@@ -1,5 +1,8 @@
 /**
+ * physical.h
  * controls physical output of the arduino PWM
+ * responsible for data encoding (manchester)
+ * acts as a software-implemented VCO
  */
 
 #include <PWM.h>
@@ -16,10 +19,7 @@
 #define PHASE_TIME 500000/BIT_RATE
 
 namespace PHY {
-
-  // 'private' variables/functions
   namespace {
-
     // if transmitted is in the half of bit time to transmit in
     bool front_half = false;
     // time containers
@@ -39,7 +39,6 @@ namespace PHY {
        */
       SetPinFrequencySafe(PWM_PIN, LOW_FREQ);
     }
-
   }
 
   void setup() {
@@ -52,7 +51,7 @@ namespace PHY {
     pwmWrite(PWM_PIN, 128);
   }
 
-  bool idle(){
+  bool idle() {
     /**
      * update the transmission line to be idle (only low output)
      * @return true if the transmission line successfully set to idle
@@ -66,7 +65,7 @@ namespace PHY {
     return false;
   }
 
-  bool update(byte next_bit){
+  bool update(byte next_bit) {
     /**
      * updates the physical state of the arduino
      * @param  next_bit the desired next bit to transmit
@@ -89,5 +88,4 @@ namespace PHY {
     }
     return false;
   }
-
 }

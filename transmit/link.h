@@ -1,12 +1,16 @@
+/**
+ * link.h
+ * keeps track of what data will be/has been transmitted
+ * controls flags at start and end of message
+ */
+
 #include "physical.h"
 
 #define BUFFER_SIZE 1024
 #define MESSAGE_FLAG 0xAA
 
 namespace LINK {
-
   namespace {
-
     bool is_transmitting;
     byte byte_buffer[BUFFER_SIZE];
     int saved_bytes;
@@ -14,10 +18,17 @@ namespace LINK {
     byte bit_pos;
 
     byte getCurBit() {
+      /**
+       * get the current bit to be transmitted
+       * @return the current bit to be transmitted
+       */
       return (byte_buffer[byte_pos] >> (7 - bit_pos)) & 0x01;
     }
 
     void progressBit() {
+      /**
+       * move counters to the next bit to be transmitted
+       */
       if(bit_pos < 7){
         bit_pos++;
       }
@@ -28,13 +39,15 @@ namespace LINK {
     }
 
     void reset() {
+      /**
+       * reset link layer by clearing buffer and resetting counters
+       */
       is_transmitting = false;
       byte_buffer[0] = MESSAGE_FLAG;
       saved_bytes = 1;
       byte_pos = 0;
       bit_pos = 0;
     }
-
   }
 
   bool addByte(byte new_byte) {
@@ -48,7 +61,6 @@ namespace LINK {
       saved_bytes++;
       return true;
     }
-
     return false;
   }
 
@@ -59,7 +71,6 @@ namespace LINK {
     PHY::setup();
     reset();
   }
-
 
   bool isTransmitting() {
     /**
@@ -92,12 +103,8 @@ namespace LINK {
         // if successfully updated, move to next bit
         progressBit();
       }
-
       return true;
     }
-
     return false;
   }
-
-
 }
