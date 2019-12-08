@@ -1,12 +1,23 @@
+/**
+ * receive_update.ino
+ * high-level control - communicates between computer and link layer
+ */
+
 #include "link.h"
 
 void setup() {
-  // put your setup code here, to run once:
+  /**
+   * called by arduino on startup - sets up layers and starts serial connection
+   */
   LINK::setup();
   Serial.begin(9600);
 }
 
 void loop() {
+  /**
+   * periodically called by arduino
+   * updates transmission status, or writes to serial connection
+   */
   if(!LINK::update()){
     if(LINK::numBytes() > 0){
       for(int i = 0; i < LINK::numBytes(); i++){
@@ -17,7 +28,6 @@ void loop() {
       LINK::reset();
     }
   }
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
